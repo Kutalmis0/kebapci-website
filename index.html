@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kebab Palace - Premium Kebap Restoranı</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <div class="logo">Kebab Palace</div>
+        <ul>
+            <li><a data-page="home" class="nav-link active">Anasayfa</a></li>
+            <li><a data-page="menu" class="nav-link">Menü</a></li>
+            <li><a data-page="about" class="nav-link">Hakkımızda</a></li>
+            <li><a data-page="order" class="nav-link">Sipariş</a></li>
+            <li><a data-page="contact" class="nav-link">İletişim</a></li>
+        </ul>
+    </nav>
+
+    <div id="home" class="page active">
+        <div class="hero">
+            <h1>KEBAB PALACE</h1>
+            <p>Anadolu'nun Lezzetini Modern Tasarımla Sunuyoruz</p>
+            <button class="btn" data-page="menu">Menüyü Keşfet</button>
+            <button class="btn" data-page="order">Sipariş Ver</button>
+        </div>
+
+        <div class="promo">
+            <strong>🎉 AÇILIŞ İNDİRİMİ</strong><br>
+            Tüm ürünlerde %15 indirim! Sadece bu ay geçerli.
+        </div>
+
+        <div class="container">
+            <div class="features">
+                <div class="feature-card">
+                    <i class="fas fa-bolt"></i>
+                    <h3>Hızlı Teslimat</h3>
+                    <p>10 dakikada sıcak kebaplar</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-user-tie"></i>
+                    <h3>30 Yıllık Deneyim</h3>
+                    <p>Ustalık ve güven garantisi</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-leaf"></i>
+                    <h3>Taze Malzeme</h3>
+                    <p>Her gün pazardan taze</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h3>Öğrenci Dostu</h3>
+                    <p>%20 indirim her gün</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="menu" class="page">
+        <div class="page-title">
+            <h2>Lezzet Cenneti</h2>
+            <p>Anadolu'nun En Seçkin Kebap Çeşitleri</p>
+        </div>
+
+        <div class="container">
+            <div class="menu-layout">
+                <div class="menu-grid" id="menuGrid"></div>
+                
+                <div class="menu-sidebar">
+                    <div class="summary">
+                        <h3>Sepetim</h3>
+                        <div id="menuCartItems">
+                            <p style="color: #999;">Ürün seçin...</p>
+                        </div>
+                        <div class="summary-total">
+                            Toplam: <span id="menuTotal">₺0</span>
+                        </div>
+                        <button class="btn" id="menuOrderBtn" style="width: 100%; margin-top: 1rem; display: none;">SİPARİŞ VER</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="about" class="page">
+        <div class="page-title">
+            <h2>Hakkımızda</h2>
+        </div>
+
+        <div class="container">
+            <div class="about-text">
+                <h3>Kebab Palace Hikayesi</h3>
+                <p>Kebab Palace, 1995 yılından beri Ankara'nın en köklü kebapçılarından biri. Geleneksel Anadolu mutfağı ve modern teknoloji birleşiminde yaratılan lezzet cenneti.</p>
+                
+                <h3>Misyonumuz</h3>
+                <p>Anadolu'nun otantik kebap kültürünü en kaliteli malzemelerle sunmak, her müşterimize aile yakınlığında hizmet etmek.</p>
+                
+                <h3>Vizyonumuz</h3>
+                <p>Türk kebap kültürünün dünyaca tanınan bir markası olmak, yurt dışında da Kebab Palace'ı temsil etmek.</p>
+            </div>
+
+            <h2 style="text-align: center; color: #8B0000; margin: 2rem 0;">Usta Şeflerimiz</h2>
+            <div class="team-grid" id="teamGrid"></div>
+        </div>
+    </div>
+
+    <div id="order" class="page">
+        <div class="page-title">
+            <h2>Online Sipariş</h2>
+        </div>
+
+        <div class="container">
+            <div class="order-grid">
+                <div class="form-section">
+                    <div class="success-msg" id="successMsg">✓ Siparişiniz başarıyla alındı!</div>
+                    <form id="orderForm">
+                        <h3>Kişi Bilgileri</h3>
+                        <div class="form-group">
+                            <label>Ad Soyad *</label>
+                            <input type="text" id="name" placeholder="Adınız">
+                            <div class="error" id="nameError">En az 3 karakter</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Telefon *</label>
+                            <input type="tel" id="phone" placeholder="05XXXXXXXXX">
+                            <div class="error" id="phoneError">Geçerli telefon girin</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Adres *</label>
+                            <input type="text" id="address" placeholder="Adresiniz">
+                            <div class="error" id="addressError">En az 10 karakter</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Ürün Seçimi *</label>
+                            <select id="product">
+                                <option value="">Seçiniz...</option>
+                            </select>
+                            <div class="error" id="productError">Ürün seçiniz</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Adet *</label>
+                            <input type="number" id="quantity" min="1" value="1">
+                            <div class="error" id="quantityError">1-20 arası</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Notlar</label>
+                            <textarea id="notes" placeholder="Özel istekleriniz..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn" style="width: 100%;">SİPARİŞİ ONAYLA</button>
+                    </form>
+                </div>
+
+                <div class="summary">
+                    <h3>Sipariş Özeti</h3>
+                    <div id="cartItems">
+                        <p style="color: #999;">Ürün seçin...</p>
+                    </div>
+                    <div class="summary-total">
+                        Toplam: <span id="total">₺0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="contact" class="page">
+        <div class="page-title">
+            <h2>İletişim</h2>
+        </div>
+
+        <div class="container">
+            <div class="contact-grid">
+                <div class="contact-card">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h3>Adres</h3>
+                    <p>Çıkrıkçılar Cad. No:42<br>Ulus, Ankara 06100</p>
+                </div>
+                <div class="contact-card">
+                    <i class="fas fa-phone"></i>
+                    <h3>Telefon</h3>
+                    <p>(0312) 310 50 50<br>0531 123 4567</p>
+                </div>
+                <div class="contact-card">
+                    <i class="fas fa-clock"></i>
+                    <h3>Saatler</h3>
+                    <p>Pzrt-Cmts: 10:00-23:30<br>Pazar: 11:00-22:00</p>
+                </div>
+                <div class="contact-card">
+                    <i class="fas fa-envelope"></i>
+                    <h3>E-mail</h3>
+                    <p>info@kebabpalace.com<br>siparis@kebabpalace.com</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Kebab Palace. Tüm Hakları Saklıdır.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
