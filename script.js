@@ -257,6 +257,9 @@ function submitOrder(e) {
     cart = [];
     updateCart();
 
+    // Siparişleri göster
+    displayOrders();
+
     // Mesajı 3 saniye sonra gizle
     setTimeout(() => {
         document.getElementById('successMsg').style.display = 'none';
