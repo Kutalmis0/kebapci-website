@@ -185,14 +185,14 @@ function validateForm() {
         isValid = false;
     }
 
-    // Ürün seçimi kontrol
-    if (!product) {
+    // Ürün seçimi kontrol - sepette ürün varsa form select'ten seçim zorunlu değil
+    if (!product && cart.length === 0) {
         document.getElementById('productError').classList.add('show');
         isValid = false;
     }
 
-    // Miktar kontrol
-    if (qty < 1 || qty > 20) {
+    // Miktar kontrol - sadece form select'ten seçim yapıldıysa kontrol et
+    if (product && (qty < 1 || qty > 20)) {
         document.getElementById('quantityError').classList.add('show');
         isValid = false;
     }
@@ -212,17 +212,31 @@ function submitOrder(e) {
     const phone = document.getElementById('phone').value.trim();
     const address = document.getElementById('address').value.trim();
     const product = document.getElementById('product').value;
-    const qty = parseInt(document.getElementById('quantity').value);
+    const qty = parseInt(document.getElementById('quantity').value) || 0;
     const notes = document.getElementById('notes').value.trim();
+
+    // Eğer sepette ürün varsa sepeti kullan, yoksa form select'ten seçilen ürünü kullan
+    let orderCart = cart.length > 0 ? cart : [];
+    
+    if (product && cart.length === 0) {
+        const selectedProduct = products.find(p => p.id === parseInt(product));
+        for (let i = 0; i < qty; i++) {
+            orderCart.push({
+                id: selectedProduct.id,
+                name: selectedProduct.name,
+                price: selectedProduct.price
+            });
+        }
+    }
 
     const order = {
         name,
         phone,
         address,
-        product,
-        qty,
+        product: product || 'Sepettten seçili',
+        qty: product ? qty : orderCart.length,
         notes,
-        cart,
+        cart: orderCart,
         date: new Date().toLocaleString('tr-TR')
     };
 
