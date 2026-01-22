@@ -40,6 +40,8 @@ const images = {
     12: "images/ayran.jpg"
 };
 
+// CRUD - SİPARİŞ VERİLERİ
+let orders = [];
 let cart = [];
 
 // SAYFA GÖSTERİMİ
@@ -51,6 +53,11 @@ function showPage(pageId) {
     document.querySelector(`[data-page="${pageId}"]`).classList.add('active');
     
     window.scrollTo(0, 0);
+    
+    // Sipariş sayfasına gittiğinde siparişleri göster
+    if (pageId === 'order') {
+        displayOrders();
+    }
 }
 
 // MENÜ YÜKLEME
@@ -200,7 +207,7 @@ function validateForm() {
     return isValid;
 }
 
-// SİPARİŞ GÖNDER
+// CREATE - SİPARİŞ OLUŞTUR
 function submitOrder(e) {
     e.preventDefault();
 
@@ -229,19 +236,20 @@ function submitOrder(e) {
         }
     }
 
-    const order = {
+    const newOrder = {
+        id: Date.now(),
         name,
         phone,
         address,
-        product: product || 'Sepettten seçili',
-        qty: product ? qty : orderCart.length,
         notes,
-        cart: orderCart,
-        date: new Date().toLocaleString('tr-TR')
+        items: orderCart,
+        total: orderCart.reduce((sum, item) => sum + item.price, 0),
+        date: new Date().toLocaleString('tr-TR'),
+        status: 'Hazırlanıyor'
     };
 
-    // Sipariş kaydı (console'a yazdır)
-    console.log('Yeni Sipariş:', order);
+    orders.push(newOrder);
+    console.log('Yeni Sipariş Oluşturuldu:', newOrder);
 
     // Başarı mesajı göster
     document.getElementById('successMsg').style.display = 'block';
@@ -253,6 +261,119 @@ function submitOrder(e) {
     setTimeout(() => {
         document.getElementById('successMsg').style.display = 'none';
     }, 3000);
+}
+
+// READ - SİPARİŞLERİ GÖRÜNTÜLEMEz (SIPARIŞ SAYFASININ ALTINDA GÖSTER)
+function displayOrders() {
+    let orderSection = document.getElementById('ordersList');
+    
+    // Eğer section yoksa oluştur
+    if (!orderSection) {
+        const container = document.querySelector('#order .container');
+        orderSection = document.createElement('div');
+        orderSection.id = 'ordersList';
+        orderSection.className = 'container';
+        orderSection.style.marginTop = '3rem';
+        orderSection.style.borderTop = '2px solid #8B0000';
+        orderSection.style.paddingTop = '2rem';
+        container.appendChild(orderSection);
+    }
+
+    if (orders.length === 0) {
+        orderSection.innerHTML = '<p style="text-align: center; color: #999; padding: 2rem; font-size: 1.1rem;">Henüz sipariş yok</p>';
+        return;
+    }
+
+    let html = '<h2 style="color: #8B0000; text-align: center; margin-bottom: 2rem;">Siparişlerim</h2>';
+    html += '<div style="display: grid; gap: 1.5rem;">';
+    
+    orders.forEach(order => {
+        const itemsHtml = order.items.map(item => 
+            `<div style="margin: 0.3rem 0 0 1rem; color: #666; font-size: 0.9rem;">- ${item.name} = Lira ${item.price}</div>`
+        ).join('');
+
+        html += `
+            <div style="background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); border-left: 5px solid #8B0000;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+                    <div>
+                        <h3 style="color: #8B0000; margin: 0 0 0.5rem 0;">${order.name}</h3>
+                        <p style="color: #666; margin: 0.3rem 0; font-size: 0.9rem;">Telefon: ${order.phone}</p>
+                        <p style="color: #666; margin: 0.3rem 0; font-size: 0.9rem;">Adres: ${order.address}</p>
+                        <p style="color: #999; margin: 0.3rem 0; font-size: 0.85rem;">Tarih: ${order.date}</p>
+                        <p style="color: #FFD700; margin: 0.5rem 0 0 0; font-size: 0.9rem; font-weight: bold;">Status: ${order.status}</p>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: flex-end;">
+                        <button onclick="editOrder(${order.id})" style="padding: 8px 15px; background: #2196F3; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 0.9rem;">Düzenle</button>
+                        <button onclick="deleteOrder(${order.id})" style="padding: 8px 15px; background: #D4001C; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 0.9rem;">Sil</button>
+                    </div>
+                </div>
+                
+                <div style="background: #f9f9f9; padding: 1rem; border-radius: 5px; margin-bottom: 1rem;">
+                    <p style="margin: 0 0 0.5rem 0; font-weight: bold; color: #333;">Siparişler:</p>
+                    ${itemsHtml}
+                </div>
+                
+                ${order.notes ? `<p style="color: #666; font-size: 0.9rem; font-style: italic; margin: 0.5rem 0; padding: 0.5rem; background: #fff3cd; border-radius: 3px;"><strong>Not:</strong> ${order.notes}</p>` : ''}
+                
+                <div style="text-align: right; font-size: 1.2rem; font-weight: bold; color: #8B0000; margin-top: 1rem; border-top: 1px solid #ddd; padding-top: 1rem;">
+                    Toplam: Lira ${order.total}
+                </div>
+            </div>
+        `;
+    });
+
+    html += '</div>';
+    orderSection.innerHTML = html;
+}
+
+// UPDATE - SİPARİŞİ DÜZENLE
+function editOrder(orderId) {
+    const order = orders.find(o => o.id === orderId);
+    if (!order) {
+        alert('Sipariş bulunamadı!');
+        return;
+    }
+
+    const newName = prompt('Yeni ad:', order.name);
+    if (newName === null || newName.trim() === '') return;
+
+    const newPhone = prompt('Yeni telefon:', order.phone);
+    if (newPhone === null || newPhone.trim() === '') return;
+
+    const newAddress = prompt('Yeni adres:', order.address);
+    if (newAddress === null || newAddress.trim() === '') return;
+
+    const newNotes = prompt('Yeni notlar:', order.notes);
+    if (newNotes === null) return;
+
+    const newStatus = prompt('Yeni status (Hazırlanıyor/Hazır/Teslim Edildi):', order.status);
+    if (newStatus === null || newStatus.trim() === '') return;
+
+    order.name = newName;
+    order.phone = newPhone;
+    order.address = newAddress;
+    order.notes = newNotes;
+    order.status = newStatus;
+
+    console.log('Sipariş Güncellendi:', order);
+    displayOrders();
+    alert('Sipariş başarıyla güncellendi!');
+}
+
+// DELETE - SİPARİŞİ SİL
+function deleteOrder(orderId) {
+    if (!confirm('Bu siparişi silmek istediğinizden emin misiniz?')) {
+        return;
+    }
+
+    const index = orders.findIndex(o => o.id === orderId);
+    if (index > -1) {
+        const deletedOrder = orders[index];
+        orders.splice(index, 1);
+        console.log('Sipariş Silindi:', deletedOrder);
+        displayOrders();
+        alert('Sipariş başarıyla silindi!');
+    }
 }
 
 // EVENT LİSTENERLARI AYARLA
